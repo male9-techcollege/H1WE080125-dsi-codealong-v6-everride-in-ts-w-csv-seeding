@@ -1,0 +1,224 @@
+/* Maybe TO DO after doing the mandatory reading and exercises:
+in the experiments of v4, it was fine to have a slightly illogical set of fields.
+In a relational database, it would make more sense to have dates of update in a different table since there is no real update at creation time.
+Also, I could create additional tables for reused fields (make, model, etc.).
+
+IMPORTANT note about idempotency:
+HTTP-request methods such as put are not inherently idempotent. Programmers are asked to make these requests idempotent 
+in order to respect standards set by Requests for Comments (RFCs) to the Internet Engineering Task Force (IETF).
+*/
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// A schema is a database. A model is like a table in MS Access.
+/* ORM: object relational mapping. "Some popular Node.js / JavaScript ORM frameworks include:
+Sequelize
+Prisma (...)
+Choosing the right ORM for you depends on the programming language being used and the specific needs of the project."
+https://ishangodhani.medium.com/7-best-and-worst-orm-for-node-js-in-2024-7fd326afdf73 (That source seems to indicate that Sequelize is more performant than Prisma, but Prisma is good for beginners/people who don't know much about back-end development.)
+*/
+
+// generator og datakilde "er indstillinger for hvor data skal hentes og hvordan de skal kaldes." https://moodle.techcollege.dk/course/section.php?id=284529
+/* Every time the model is modified, it is necessary to run prisma generate with following command line.
+IMPORTANT: that only works when it is done from the folder where the file schema.prisma is! 
+npx prisma generate
+npx prisma migrate dev --name <name_given_to_migration_see_migrations_folder>
+Sources: 
+https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma
+Moodle
+*/
+generator client {
+    provider = "prisma-client-js"
+    /* Acc. to CodeCraft Academy at https://www.youtube.com/watch?app=desktop&v=XHYAYe-nmxg, 
+    ES modules do not allow the direct importation of the functions and objects of the Prisma client, which is written in CommonJS.
+    Node.js requires a direct importation.
+    The solution is to omit the following line (location for output) since it is used for direct importation, and then install Prisma Client.
+    Prisma will generate a folder for the Prisma client in node_modules/.prisma/client (also called @prisma/client) instead of a folder in a custom location. 
+    output = "../src/generated"
+    */
+}
+
+datasource db {
+    provider = "mysql"
+    //A week ago, pretty much when we started on this codealong, Prisma introduced breaking changes with Prisma 7. Since Heinz could not quickly figure out how to use the new version of Prisma, we reverted to using version 6.19, with which he is familiar. The url property is no longer accepted here.
+    //Upgrading to Prisma 7 seems mandatory. Without the url line, I cannot use npx prisma generate successfully. With it, I get an error during migration due to the use of @@map even though I am using Prisma 6.19. As a consequence, I have to out-comment the at-maps and keep the field names singular in my database until the teachers figure out how to use Prisma 7.
+    url = env("DATABASE_URL")
+}
+
+/* Exercises in v5
+The user model is for logging in. 
+
+"Feltet role skal bruges til brugerroller som eksempelvis user og admin. Du kan bruge datatypen enum til denne."
+https://moodle.techcollege.dk/course/section.php?id=282550
+The enum data type works a bit like a select menu.
+*/
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+    id         Int    @id @default(autoincrement())
+    firstname  String 
+    lastname   String 
+    email      String  @unique
+    password   String
+    role       Role //See enum above
+    isActive   Boolean
+    createdOn  DateTime @default(now())
+    updatedOn  DateTime @default(now())
+
+    /* Heinz said we could use this to give another name to the table than the word after model 
+    (preferably not Users or Categories, but sth more telling). 
+    "Prisma model naming conventions (singular form, PascalCase) do not always match table names in the database. A common approach for naming tables/collections in databases is to use plural form and snake_case notation - for example: comments. (...)
+    However, you can still adhere to the naming convention without renaming the underlying comments table in the database by using the @@map attribute: (...)
+    With this model definition, Prisma ORM automatically maps the Comment model to the comments table in the underlying database."
+    https://www.prisma.io/docs/orm/prisma-schema/data-model/models
+
+    DO NOT add a semicolon at the end, otherwise it doesn't work. 
+    @@map("users")
+    */
+}
+
+/* EXERCISE after v4. Diagram at https://drawsql.app/teams/techcollege-3/diagrams/everride-2 */
+/* "The European passenger car classification system was introduced in 1999, assigning a letter to each vehicle type. According to this system, the main classes are labeled A, B, C, D, E, F, I, J, and S — ranging from the smallest city cars to luxurious premium vehicles and sports models. (...)
+Class A: City Cars (Microcars) (...)
+Class B: Small Cars (...)
+Class C: European Mid-Size (Golf Class) (...)
+Class D: Large Family Cars (...)
+Class E: Executive Comfort Cars (Business Class) (...)
+Class F: Luxury Executive Cars (...)
+Class I: All-Road Wagons (...)
+Class J: Crossovers and SUVs (...)
+Class S: Supercars and Sports Coupes"
+https://autoline.info/blog/a-b-c-d-e-f-i-j-and-s-class-cars-key-features-differences-and-iconic-models/ 
+EU source (I is missing, so I am dropping it (apparently unofficial), but there is also a M "segment" (not class or category)):
+https://alternative-fuels-observatory.ec.europa.eu/general-information/vehicle-types 
+In Postman pre-request script:
+    const Categories = [
+        "A (city car)",
+        "B (small car)",
+        "C (medium car)",
+        "D (large car)",
+        "E (executive car)",
+        "F (luxury car)",
+        "J (sport-utility vehicle (SUV)/crossover-utility vehicle (CUV))",
+        "S (sport coupes)",
+        "M (multi-purpose vehicle (MPV))"
+    ];
+If there is a default in the db, it should be an SUV because:
+"SUVs account for half (51%) of total EU car sales. This interactive chart shows the share of the various segments – Small (A+B), Lower medium (C), Upper medium (D), Luxury (E+F), MPV and SUV – of the EU car market per year for the 2012-2023 period, as well as the number of units sold."
+https://www.acea.auto/figure/new-passenger-cars-by-segment-in-eu/
+*/
+/* Source for car brands (I am setting this to also count as the make for the sake of this exercise, although it may be inaccurate at times): 
+https://mobility.dk/nyregistreringer/
+const Brands = [
+    "Volkswagen",
+    "Skoda",
+    "Mercedes-Benz",
+    "Audi",
+    "BMW",
+    "Cupra", //Not a make: "We design and engineer our cars in Barcelona, Spain, where the CUPRA car brand was founded. We are also proud members of the Volkswagen Group." https://www.cupraofficial.com/brand/about-us/about-cupra
+    "Toyota",
+    "Renault",
+    "Hyundai",
+    "Kia",
+    "Ford",
+    "Peugeot",
+    "Nissan",
+    "Volvo",
+    "Suzuki",
+    "MG",
+    "XPeng",
+    "BYD",
+    "Polestar", //It is getting too complicated. Like Cupra, it is called a manufacturer even though it has two owners: Volvo and some Chinese company.
+    "Citroen",
+    "Navor",
+    "Opel",
+    "Mazda",
+    "Seat",
+    "Dacia",
+    "Mini",
+    "Honda",
+    "Porsche",
+    "Zeekr",
+    "Lexus",
+    "Hongqi",
+    "Subaru",
+    "Land Rover",
+    "Alfa Romeo"
+];
+*/
+model Car {
+    id           Int    @id @default(autoincrement())
+    category_id  Int
+    brand_id     Int
+    make         String 
+    model        String
+    year         Int
+    trimLevel    String
+    generation   String
+    price        Float //Alternative from codealong: Decimal @db.Decimal(10,2)
+    used         Boolean
+    createdOn    DateTime @default(now())
+    updatedOn    DateTime @default(now())
+
+    // This is how one establishes a one-to-many relationship. No need for a relational table.
+    category     Category @relation(fields: [category_id], references: [id]) //Singular: a car can only have one category. Always use square brackets (for array) after fields and references (plural).
+    brand        Brand @relation(fields: [brand_id], references: [id]) //Singular: a car can only have one brand.
+    // CarFuelRel is a relational table. This is how one establishes a many-to-many relationship. 
+    carFuelRels  CarFuelRel[]
+
+    //@@map("cars")
+}
+
+model Category {
+    id         Int    @id @default(autoincrement())
+    name       String 
+    createdOn  DateTime @default(now())
+    updatedOn  DateTime @default(now())
+
+    cars       Car[] //Plural: a category can have more than one car.
+
+    //@@map("categories")
+}
+
+model Brand {
+    id         Int    @id @default(autoincrement())
+    name       String
+    logo       String 
+    createdOn  DateTime @default(now())
+    updatedOn  DateTime @default(now())
+
+    cars       Car[] //Plural: a brand can identify more than one car.
+
+    //@@map("brands")
+}
+
+model FuelType {
+    id         Int    @id @default(autoincrement())
+    name       String
+    createdOn  DateTime @default(now())
+    updatedOn  DateTime @default(now())
+
+    carFuelRels  CarFuelRel[]
+
+    //@@map("brands")
+}
+
+// Relationstabel
+model CarFuelRel {
+    id           Int    @id @default(autoincrement())
+    car_id       Int
+    fuelType_id  Int   
+    createdOn    DateTime @default(now())
+    updatedOn    DateTime @default(now())
+
+    car         Car @relation(fields: [car_id], references: [id]) //Plural: a type of fuel can be used by more than one car, and a car can use more than one type of fuel.
+    fuelType    FuelType @relation(fields: [fuelType_id], references: [id]) //Plural: a type of fuel can be used by more than one car, and a car can use more than one type of fuel.
+
+}

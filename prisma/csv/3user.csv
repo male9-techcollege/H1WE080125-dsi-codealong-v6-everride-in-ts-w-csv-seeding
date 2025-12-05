@@ -1,0 +1,6 @@
+"id","password","email","createdOn","firstname","isActive","lastname","role","updatedOn"
+"1","$2b$10$4eFBU2SopKGuj3ZMrIuw.eO3IxhxzNjFTSvpJXrM2xpx.hAn4g9Qu","male9@elev.techcollege.dk","2025-12-05 08:13:45","Marie-Pierre","1","Lessard","ADMIN","2025-12-05 08:13:45"
+"2","$2b$10$vrOBdYZcDymk8l9mG7vLZexcnJ1MAR8qPxC2ekQLfv4VZAViDbvZe","heka@techcollege.dk","2025-12-05 08:13:45","Heinz","1","Kanstrup","USER","2025-12-05 08:13:45"
+"3","$2b$10$NguZXRvXtwUXJUC4MK4lf.Tw77JYGlU0KnbpzXTDyukhh9mRRSSAS","bni@techcollege.dk","2025-12-05 08:13:45","Bo","1","Nicolaisen","USER","2025-12-05 08:13:45"
+"4","$2b$10$jsivOmKKRHCaTUaPm8cXx.6hP3KsKzMq9UV8BHWw0ntFiSVcTtQVa","kfry@techcollege.dk","2025-12-05 08:13:45","Kasper","1","Frydensberg","USER","2025-12-05 08:13:45"
+"5","$2b$10$02xPs.Y0z2NzTsodij09DeoDE6zKbVmShx/dK8G..NMIDEW2IueHa","tvso@techcollege.dk","2025-12-05 08:13:46","Tim","1","Sørensen","USER","2025-12-05 08:13:46"
