@@ -17,6 +17,55 @@ export const fieldTypes: Record<string, Record<string, "string" | "number" | "bo
         isActive: "boolean",
         createdOn: "date",
         updatedOn: "date"
+    },
+
+    //Model 2  
+    car: {
+        id: "number",
+        category_id: "number",
+        brand_id: "number",
+        make: "string",
+        model: "string",
+        year: "number",
+        trimLevel: "string",
+        generation: "string",
+        price: "number",
+        used: "boolean",
+        createdOn: "date",
+        updatedOn: "date"
+    },
+
+    //Model 3  
+    category: {
+        id: "number",
+        name: "string",
+        createdOn: "date",
+        updatedOn: "date"
+    },
+
+    //Model 4 
+    brand: {
+        id: "number",
+        name: "string",
+        logo: "string",
+        createdOn: "date",
+        updatedOn: "date"
+    },
+
+    //Model 5  
+    fuelType: {
+        id: "number",
+        name: "string",
+        createdOn: "date",
+        updatedOn: "date"
+    },
+
+    //Model 6
+    carFuelRel: {
+        id: "number",
+        car_id: "number",
+        fuelType_id: "number",
+        createdOn: "date",
+        updatedOn: "date"
     }
-    //TO DO Model 2...  
 };

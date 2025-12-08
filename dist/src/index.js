@@ -1,4 +1,3 @@
-/* TO DO Reminder: portions of package.json still missing */
 /* NOTES ABOUT CONTENTS OF PACKAGE.JSON IN VERSION 5, BEFORE I CONVERTED PROJECT TO TYPESCRIPT:
 
 About:
@@ -30,6 +29,10 @@ NOTES ABOUT CONTENTS OF PACKAGE.JSON IN VERSION 6 (Everride in TS):
 
 The command "nodemon" no longer works. To start the server, I have to use:
 npm run dev
+
+There is a mistake on Moodle at https://moodle.techcollege.dk/course/section.php?id=284926 :
+the src folder was missing from the value of the start key. Consequence: "npm run start" did not work.
+"start": "node dist/src/index.js",
 
 */
 /* Teacher's code from codealongs can be found at https://github.com/Webudvikler-TechCollege/H1WE080125-dsi-codealong */
