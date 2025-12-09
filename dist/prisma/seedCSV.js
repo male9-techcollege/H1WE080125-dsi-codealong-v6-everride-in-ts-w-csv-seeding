@@ -52,9 +52,11 @@ Acc. to advice by jameshfisher found at https://stackoverflow.com/questions/1630
 citing the URL living standard at https://url.spec.whatwg.org,
 something like the following should work, but it doesn't (type error: invalid URL). My test database was not seeded even though no error was thrown in the terminal.
 const dir = new URL('/csv', __dirname).href;
+I got the same type error with:
+const dir = new URL('csv', __dirname).href;
 I asked Heinz why, but he doesn't know this syntax, and he doesn't think that the recommendation on W3 Schools matters much because the method below works.
 */
-const dir = new URL('csv', __dirname).href;
+const dir = path.join(__dirname, "csv");
 console.log(dir);
 async function main() {
     const csvFiles = (await readdir(dir)).filter(f => f.endsWith(".csv"));
@@ -108,12 +110,17 @@ async function main() {
         raw is an array, which must be why there is more than 1 promise
         Note: there has to be a method applied to the promise (Promise() does not work).
         
-        TO DO: cast() is not a built-in JS function. Where does it come from?
-        
+        cast() is an async function defined below. One can say defined or declared acc. to https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
         */
         const data = await Promise.all(raw.map((row) => cast(model, row)));
         /* Decimals have to use periods in the CSV file, or error NaN is thrown!
         My exports from HeidiSQL had a comma instead, probably because of my regional choices in Windows. */
+        /* createMany is a Prisma method.
+        "bout transactions in Prisma Client
+        Prisma Client provides the following options for using transactions: (...)
+        - Batch / bulk transactions: process one or more operations in bulk with updateMany, deleteMany, and createMany."
+        https://www.prisma.io/docs/orm/prisma-client/queries/transactions
+        */
         await prisma[model].createMany({ data, skipDuplicates: true });
     }
     ;
@@ -139,7 +146,7 @@ async function cast(model, row) {
         In this code, the logical OR operator provides default values for userName and userAge if the corresponding input variables are falsy. However, what if you wanted to allow the user to enter a name or age of 0? In that case, the logical OR operator would not work as expected because 0 is a falsy value.
         In summary, the nullish coalescing operator is a valuable addition to JavaScript that allows you to provide default values for variables more precisely and reasonably. It’s handy when you need to allow for the possibility of null or undefined values or when you want to avoid assigning default values for other falsy values such as 0 or “”."
         https://codedamn.com/news/javascript/double-question-mark-in-javascript-nullish-coalescing-operator
-        TO DO: ask Q because ?? null seems to defeat the point of using the nullish coalescing operator!
+        ?? null seems to defeat the point of using the nullish coalescing operator; Heinz doesn't why this code was written like that.
         */
         else
             out[key] = val ?? null;
@@ -148,6 +155,18 @@ async function cast(model, row) {
     return out;
 }
 ;
+/* main is a function defined above.
+"JavaScript Promise then() (...)
+Syntax
+    promise.then(fulfilled(), rejected())"
+https://www.w3schools.com/jsref/jsref_promise_then.asp
+
+"JavaScript Promise finally() (...)
+Syntax
+    promise.finally(settled()) (...)
+settled()	Function to run when the promise is settled (fulfilled or rejected)"
+https://www.w3schools.com/jsref/jsref_promise_finally.asp
+*/
 main()
     .then(() => console.log("Seeding done"))
     .finally(() => prisma.$disconnect());
