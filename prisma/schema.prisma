@@ -57,8 +57,8 @@ https://moodle.techcollege.dk/course/section.php?id=282550
 The enum data type works a bit like a select menu.
 */
 enum Role {
-  USER
-  ADMIN
+    USER
+    ADMIN
 }
 
 model User {
@@ -220,5 +220,4 @@ model CarFuelRel {
 
     car         Car @relation(fields: [car_id], references: [id]) //Plural: a type of fuel can be used by more than one car, and a car can use more than one type of fuel.
     fuelType    FuelType @relation(fields: [fuelType_id], references: [id]) //Plural: a type of fuel can be used by more than one car, and a car can use more than one type of fuel.
-
 }
