@@ -23,7 +23,7 @@ url.fileURLToPath(import.meta.url)
 the first url representing the built-in url module, but unlike that author, we are just importing fileURLToPath from url package, not the whole package. 
 As a consequence, it is not necessary to indicate the JS module and then the desired function in that module. 
 
-The finds the __filename and __dirname of the current ES module: */
+This finds the __filename and __dirname of the current ES module: */
 const __filename = fileURLToPath(import.meta.url);
 console.log("ES Module file path:", __filename);
 const __dirname = path.dirname(__filename);
@@ -119,7 +119,7 @@ async function main() {
         /* Decimals have to use periods in the CSV file, or error NaN is thrown! 
         My exports from HeidiSQL had a comma instead, probably because of my regional choices in Windows. */
         /* createMany is a Prisma method.
-        "bout transactions in Prisma Client
+        "About transactions in Prisma Client
         Prisma Client provides the following options for using transactions: (...)
         - Batch / bulk transactions: process one or more operations in bulk with updateMany, deleteMany, and createMany."
         https://www.prisma.io/docs/orm/prisma-client/queries/transactions
