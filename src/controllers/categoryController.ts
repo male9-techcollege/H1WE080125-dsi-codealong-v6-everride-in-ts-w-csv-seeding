@@ -59,7 +59,7 @@ export const getRecordsByMariePierreLessard = async (req: Request, res: Response
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).send(`DB Fejl: Kunne ikke hente liste af brands`);
+        res.status(500).send(`DB Fejl: Kunne ikke hente liste af kategorier`);
     };
 };
 

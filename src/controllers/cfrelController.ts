@@ -58,7 +58,7 @@ export const getRecordsByMariePierreLessard = async (req: Request, res: Response
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).send(`DB Fejl: Kunne ikke hente liste af car-fuel relations`);
+        res.status(500).send(`DB Fejl: Kunne ikke hente liste af bil-drivmiddel relationer.`);
     };
 };
 
@@ -84,7 +84,7 @@ export const getRecordByMariePierreLessard = async (req: Request, res: Response)
         return res.status(200).json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'DB Fejl: Kunne ikke hente varemærke' });
+        res.status(500).json({ error: 'DB Fejl: Kunne ikke hente bil-drivmiddel relation.' });
     }
 };
 
@@ -133,10 +133,10 @@ export const deleteRecordByMariePierreLessard = async (req: Request, res: Respon
             where: { id },
         });
 
-        res.status(200).json({ message: `Mærke nr. ${id} er slettet`, deletedId: id });
+        res.status(200).json({ message: `Bil-drivmiddel relation nr. ${id} er slettet.`, deletedId: id });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Kunne ikke slette mærket' });
+        res.status(500).json({ error: 'Kunne ikke slette bil-drivmiddel relation.' });
     };
 };
 
